@@ -2,19 +2,19 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ClassID(pub Uuid);
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct FileID(pub Uuid);
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct PassPhrase(pub String);
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct ArMarkerID(pub String);
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Class {
     pub name: String,
     pub id: ClassID,
@@ -25,7 +25,7 @@ pub struct Class {
     pub files: Vec<File>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct File {
     pub id: FileID,
 
@@ -36,7 +36,7 @@ pub struct File {
     pub resource_info: ResourceInfo,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct ResourceInfo {
     #[serde(rename = "fileName")]
     pub filename: String,
