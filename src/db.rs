@@ -32,6 +32,7 @@ pub trait Database: Send {
 
 #[derive(Error, Debug)]
 #[non_exhaustive]
+#[allow(dead_code)]
 pub enum DatabaseError {
     #[error("specified class id not found")]
     ClassNotFound,
