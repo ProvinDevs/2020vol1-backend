@@ -8,6 +8,7 @@ pub struct SimpleClassInfo {
     id: ClassID,
     pass_phrase: PassPhrase,
 }
+
 pub trait Database: Send {
     type Error: Debug + Send;
 
