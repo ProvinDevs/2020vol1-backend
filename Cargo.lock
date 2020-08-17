@@ -150,6 +150,7 @@ checksum = "942f72db697d8767c22d46a598e01f2d3b475501ea43d0db4f16d90259182d0b"
 dependencies = [
  "num-integer",
  "num-traits",
+ "serde",
  "time",
 ]
 
@@ -420,6 +421,7 @@ dependencies = [
 name = "hacku_2020_frontend"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "dotenv",
  "env_logger",
  "google-storage1",
@@ -427,6 +429,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
+ "uuid",
  "warp",
 ]
 
@@ -1652,6 +1655,16 @@ name = "utf-8"
 version = "0.7.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "05e42f7c18b8f902290b009cde6d651262f956c98bc51bca4cd1d511c9cd85c7"
+
+[[package]]
+name = "uuid"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9fde2f6a4bea1d6e007c4ad38c6839fa71cbb63b6dbf5b595aa38dc9b1093c11"
+dependencies = [
+ "rand 0.7.3",
+ "serde",
+]
 
 [[package]]
 name = "vcpkg"
