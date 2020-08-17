@@ -1,7 +1,8 @@
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
+use tokio::sync::Mutex;
 use warp::Filter;
 
-use crate::db::{Database, DatabaseError};
+use crate::db::Database;
 
 pub mod classes;
 
