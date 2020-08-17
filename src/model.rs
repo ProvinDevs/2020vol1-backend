@@ -32,31 +32,24 @@ pub struct Class {
 
 impl Class {
     pub async fn new(db: impl Database, name: String) -> Result<Self, DatabaseError> {
-        let id: Uuid;
-        loop {
-            let tmp = Uuid::new_v4();
-            if !db.class_id_exists(&ClassID(tmp)).await? {
-                id = tmp;
-                break;
+        let id = loop {
+            let generated_id = ClassID(Uuid::new_v4());
+            if !db.class_id_exists(&generated_id).await? {
+                break generated_id;
             }
-        }
+        };
 
-        let pass_phrase: PassPhrase;
-        loop {
-            let generated_phrase = Self::generate_pass_phrase(6);
-            if !db
-                .pass_phrase_exists(&PassPhrase(generated_phrase.clone()))
-                .await?
-            {
-                pass_phrase = PassPhrase(generated_phrase);
-                break;
+        let pass_phrase = loop {
+            let generated_phrase = PassPhrase(Self::generate_pass_phrase(6));
+            if !db.pass_phrase_exists(&generated_phrase).await? {
+                break generated_phrase;
             }
-        }
+        };
 
         Ok(Class {
-            id: ClassID(id),
-            pass_phrase: pass_phrase,
-            name: name,
+            id,
+            pass_phrase,
+            name,
             files: vec![],
         })
     }
