@@ -3,22 +3,34 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize)]
+pub struct ClassID(Uuid);
+
+#[derive(Serialize, Deserialize)]
+pub struct FileID(Uuid);
+
+#[derive(Serialize, Deserialize)]
+pub struct PassPhrase(String);
+
+#[derive(Serialize, Deserialize)]
+pub struct ArMarkerID(String);
+
+#[derive(Serialize, Deserialize)]
 pub struct Class {
     name: String,
-    id: Uuid,
+    id: ClassID,
 
     #[serde(rename = "passPhrase")]
-    pass_phrase: String,
+    pass_phrase: PassPhrase,
 
     files: Vec<File>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct File {
-    id: Uuid,
+    id: FileID,
 
     #[serde(rename = "markerID")]
-    marker_id: String,
+    marker_id: ArMarkerID,
 
     #[serde(rename = "resourceInfo")]
     resource_info: ResourceInfo,
