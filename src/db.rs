@@ -5,11 +5,11 @@ use thiserror::Error;
 
 #[derive(Serialize)]
 pub struct SimpleClassInfo {
-    name: String,
-    id: ClassID,
+    pub name: String,
+    pub id: ClassID,
 
     #[serde(rename = "passPhrase")]
-    pass_phrase: PassPhrase,
+    pub pass_phrase: PassPhrase,
 }
 
 #[async_trait]
