@@ -89,7 +89,7 @@ impl File {
         let id: Uuid;
         loop {
             let tmp = Uuid::new_v4();
-            if !db.class_id_exists(&ClassID(tmp)).await? {
+            if !db.file_id_exists(&ClassID(tmp)).await? {
                 id = tmp;
                 break;
             }
