@@ -31,7 +31,7 @@ pub struct Class {
 }
 
 impl Class {
-    pub async fn new(name: String, db: impl Database) -> Result<Self, DatabaseError> {
+    pub async fn new(db: impl Database, name: String) -> Result<Self, DatabaseError> {
         let id: Uuid;
         loop {
             let tmp = Uuid::new_v4();
@@ -83,6 +83,33 @@ pub struct File {
 
     #[serde(rename = "resourceInfo")]
     pub resource_info: ResourceInfo,
+}
+
+impl File {
+    pub async fn new(
+        db: impl Database,
+        marker_id: ArMarkerID,
+        filename: String,
+        created_at: DateTime<Utc>,
+    ) -> Result<File, DatabaseError> {
+        let id: Uuid;
+        loop {
+            let tmp = Uuid::new_v4();
+            if !db.check_existing_class_by_id(&ClassID(tmp)).await? {
+                id = tmp;
+                break;
+            }
+        }
+
+        Ok(File {
+            id: FileID(id),
+            marker_id: marker_id,
+            resource_info: ResourceInfo {
+                filename: filename,
+                created_at: created_at,
+            },
+        })
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone)]
