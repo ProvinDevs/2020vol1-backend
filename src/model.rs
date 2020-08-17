@@ -4,6 +4,7 @@ use uuid::Uuid;
 pub struct Class {
     name: String,
     id: Uuid,
+    pass_phrase: String,
     files: Vec<File>,
 }
 
