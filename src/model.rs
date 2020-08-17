@@ -54,6 +54,7 @@ impl Class {
         })
     }
 
+    #[inline]
     fn generate_pass_phrase(size: usize) -> String {
         let mut rng = &mut rand::thread_rng();
         String::from_utf8(
