@@ -78,7 +78,7 @@ impl Database for MemoryDB {
             .iter()
             .flat_map(|c| c.files.iter())
             .find(|f| f.id == *file_id)
-            .ok_or(DatabaseError::FileNotFound)
+            .ok_or_else(|| DatabaseError::FileNotFound)
             .map(|f| f.clone())
     }
 
