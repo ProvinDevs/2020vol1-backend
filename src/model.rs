@@ -35,7 +35,7 @@ impl Class {
         let id: Uuid;
         loop {
             let tmp = Uuid::new_v4();
-            if !db.check_existing_class_by_id(&ClassID(tmp)).await? {
+            if !db.class_id_exists(&ClassID(tmp)).await? {
                 id = tmp;
                 break;
             }
@@ -45,7 +45,7 @@ impl Class {
         loop {
             let generated_phrase = Self::generate_pass_phrase(6);
             if !db
-                .check_existing_class_by_pass_phrase(&PassPhrase(generated_phrase.clone()))
+                .pass_phrase_exists(&PassPhrase(generated_phrase.clone()))
                 .await?
             {
                 pass_phrase = PassPhrase(generated_phrase);
@@ -95,7 +95,7 @@ impl File {
         let id: Uuid;
         loop {
             let tmp = Uuid::new_v4();
-            if !db.check_existing_class_by_id(&ClassID(tmp)).await? {
+            if !db.class_id_exists(&ClassID(tmp)).await? {
                 id = tmp;
                 break;
             }

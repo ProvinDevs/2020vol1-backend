@@ -29,17 +29,14 @@ pub trait Database: Send + Sync {
         new_name: &str,
     ) -> Result<(), DatabaseError>;
     async fn delete_class(&mut self, class_id: &ClassID) -> Result<Class, DatabaseError>;
-    async fn check_existing_class_by_id(&self, class_id: &ClassID) -> Result<bool, DatabaseError>;
-    async fn check_existing_class_by_pass_phrase(
-        &self,
-        class_id: &PassPhrase,
-    ) -> Result<bool, DatabaseError>;
+    async fn class_id_exists(&self, class_id: &ClassID) -> Result<bool, DatabaseError>;
+    async fn pass_phrase_exists(&self, class_id: &PassPhrase) -> Result<bool, DatabaseError>;
 
     async fn get_files(&self, class_id: &ClassID) -> Result<Vec<File>, DatabaseError>;
     async fn add_new_file(&mut self, class_id: &ClassID, file: &File) -> Result<(), DatabaseError>;
     async fn get_file_by_id(&self, file_id: &FileID) -> Result<File, DatabaseError>;
     async fn delete_file(&mut self, file_id: &FileID) -> Result<File, DatabaseError>;
-    async fn check_existing_file_by_id(&mut self, file_id: &FileID) -> Result<bool, DatabaseError>;
+    async fn file_id_exists(&mut self, file_id: &FileID) -> Result<bool, DatabaseError>;
 }
 
 #[derive(Error, Debug)]

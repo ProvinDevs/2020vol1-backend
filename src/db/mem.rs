@@ -102,18 +102,15 @@ impl Database for MemoryDB {
             .map_or_else(|| Err(DatabaseError::ClassNotFound), |c| Ok(c.clone()))
     }
 
-    async fn check_existing_class_by_id(&self, id: &ClassID) -> Result<bool, DatabaseError> {
+    async fn class_id_exists(&self, id: &ClassID) -> Result<bool, DatabaseError> {
         Ok(self.inner.iter().any(|c| c.id == *id))
     }
 
-    async fn check_existing_class_by_pass_phrase(
-        &self,
-        pass_phrase: &PassPhrase,
-    ) -> Result<bool, DatabaseError> {
+    async fn pass_phrase_exists(&self, pass_phrase: &PassPhrase) -> Result<bool, DatabaseError> {
         Ok(self.inner.iter().any(|c| c.pass_phrase == *pass_phrase))
     }
 
-    async fn check_existing_file_by_id(&mut self, file_id: &FileID) -> Result<bool, DatabaseError> {
+    async fn file_id_exists(&mut self, file_id: &FileID) -> Result<bool, DatabaseError> {
         for class in &mut self.inner {
             if let Some(index) = class.files.iter().position(|f| f.id == *file_id) {
                 return Ok(true);
