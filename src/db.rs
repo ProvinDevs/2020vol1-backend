@@ -1,15 +1,13 @@
 use crate::model::*;
 use std::fmt::Debug;
-use uuid::Uuid;
 
 // todo: delete attr after use this
 #[allow(dead_code)]
 pub struct SimpleClassInfo {
     name: String,
-    id: Uuid,
-    pass_phrase: String,
+    id: ClassID,
+    pass_phrase: PassPhrase,
 }
-
 pub trait Database: Send {
     type Error: Debug + Send;
 
