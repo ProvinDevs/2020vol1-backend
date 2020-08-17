@@ -3,44 +3,44 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize)]
-pub struct ClassID(Uuid);
+pub struct ClassID(pub Uuid);
 
 #[derive(Serialize, Deserialize)]
-pub struct FileID(Uuid);
+pub struct FileID(pub Uuid);
 
 #[derive(Serialize, Deserialize)]
-pub struct PassPhrase(String);
+pub struct PassPhrase(pub String);
 
 #[derive(Serialize, Deserialize)]
-pub struct ArMarkerID(String);
+pub struct ArMarkerID(pub String);
 
 #[derive(Serialize, Deserialize)]
 pub struct Class {
-    name: String,
-    id: ClassID,
+    pub name: String,
+    pub id: ClassID,
 
     #[serde(rename = "passPhrase")]
-    pass_phrase: PassPhrase,
+    pub pass_phrase: PassPhrase,
 
-    files: Vec<File>,
+    pub files: Vec<File>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct File {
-    id: FileID,
+    pub id: FileID,
 
     #[serde(rename = "markerID")]
-    marker_id: ArMarkerID,
+    pub marker_id: ArMarkerID,
 
     #[serde(rename = "resourceInfo")]
-    resource_info: ResourceInfo,
+    pub resource_info: ResourceInfo,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct ResourceInfo {
     #[serde(rename = "fileName")]
-    filename: String,
+    pub filename: String,
 
     #[serde(rename = "createdAt")]
-    created_at: DateTime<Utc>,
+    pub created_at: DateTime<Utc>,
 }
