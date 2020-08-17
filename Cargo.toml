@@ -17,3 +17,4 @@ google-storage1 = "1.0.14"
 dotenv = "0.15.0"
 uuid = { version = "0.8.1", features = ["v4", "serde"] }
 chrono = { version = "0.4.15", features = ["serde"] }
+async-trait = "0.1.37"
