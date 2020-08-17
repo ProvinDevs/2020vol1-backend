@@ -86,21 +86,19 @@ impl File {
         filename: String,
         created_at: DateTime<Utc>,
     ) -> Result<File, DatabaseError> {
-        let id: Uuid;
-        loop {
-            let tmp = Uuid::new_v4();
-            if !db.file_id_exists(&ClassID(tmp)).await? {
-                id = tmp;
-                break;
+        let id = loop {
+            let generated_id = FileID(Uuid::new_v4());
+            if !db.file_id_exists(&generated_id).await? {
+                break generated_id;
             }
-        }
+        };
 
         Ok(File {
-            id: FileID(id),
-            marker_id: marker_id,
+            id,
+            marker_id,
             resource_info: ResourceInfo {
-                filename: filename,
-                created_at: created_at,
+                filename,
+                created_at,
             },
         })
     }
