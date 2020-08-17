@@ -1,11 +1,13 @@
 use crate::model::*;
+use serde::Serialize;
 use std::fmt::Debug;
 
-// todo: delete attr after use this
-#[allow(dead_code)]
+#[derive(Serialize)]
 pub struct SimpleClassInfo {
     name: String,
     id: ClassID,
+
+    #[serde(rename = "passPhrase")]
     pass_phrase: PassPhrase,
 }
 
