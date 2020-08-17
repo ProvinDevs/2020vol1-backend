@@ -17,7 +17,7 @@ impl Database for MemoryDB {
                 id: c.id.clone(),
                 pass_phrase: c.pass_phrase.clone(),
             })
-            .collect::<Vec<_>>();
+            .collect();
 
         Ok(infos)
     }
