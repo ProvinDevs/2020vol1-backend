@@ -59,7 +59,7 @@ impl Database for MemoryDB {
     }
 
     async fn get_files(&self, class_id: &ClassID) -> Result<Vec<File>, DatabaseError> {
-        Ok(self.get_class_by_id(class_id).await?.files.clone())
+        Ok(self.get_class_by_id(class_id).await?.files)
     }
 
     async fn add_new_file(&mut self, class_id: &ClassID, file: &File) -> Result<(), DatabaseError> {
