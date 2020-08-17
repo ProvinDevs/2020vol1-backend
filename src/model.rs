@@ -31,7 +31,7 @@ pub struct Class {
 }
 
 impl Class {
-    pub async fn new(db: impl Database, name: String) -> Result<Self, DatabaseError> {
+    pub async fn new(db: &impl Database, name: String) -> Result<Self, DatabaseError> {
         let id = loop {
             let generated_id = ClassID(Uuid::new_v4());
             if !db.class_id_exists(&generated_id).await? {
@@ -81,7 +81,7 @@ pub struct File {
 
 impl File {
     pub async fn new(
-        db: impl Database,
+        db: &impl Database,
         marker_id: ArMarkerID,
         filename: String,
         created_at: DateTime<Utc>,
