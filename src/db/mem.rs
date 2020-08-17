@@ -6,6 +6,12 @@ pub struct MemoryDB {
     inner: Vec<Class>,
 }
 
+impl MemoryDB {
+    pub fn new() -> Self {
+        Self { inner: vec![] }
+    }
+}
+
 #[async_trait]
 impl Database for MemoryDB {
     async fn get_all_classes(&self) -> Result<Vec<SimpleClassInfo>, DatabaseError> {
