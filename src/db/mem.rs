@@ -110,9 +110,9 @@ impl Database for MemoryDB {
         Ok(self.inner.iter().any(|c| c.pass_phrase == *pass_phrase))
     }
 
-    async fn file_id_exists(&mut self, file_id: &FileID) -> Result<bool, DatabaseError> {
-        for class in &mut self.inner {
-            if let Some(index) = class.files.iter().position(|f| f.id == *file_id) {
+    async fn file_id_exists(&self, file_id: &FileID) -> Result<bool, DatabaseError> {
+        for class in &self.inner {
+            if class.files.iter().any(|f| f.id == *file_id) {
                 return Ok(true);
             }
         }

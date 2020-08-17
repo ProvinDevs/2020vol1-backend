@@ -36,7 +36,7 @@ pub trait Database: Send + Sync {
     async fn add_new_file(&mut self, class_id: &ClassID, file: &File) -> Result<(), DatabaseError>;
     async fn get_file_by_id(&self, file_id: &FileID) -> Result<File, DatabaseError>;
     async fn delete_file(&mut self, file_id: &FileID) -> Result<File, DatabaseError>;
-    async fn file_id_exists(&mut self, file_id: &FileID) -> Result<bool, DatabaseError>;
+    async fn file_id_exists(&self, file_id: &FileID) -> Result<bool, DatabaseError>;
 }
 
 #[derive(Error, Debug)]
