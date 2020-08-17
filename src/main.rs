@@ -1,3 +1,6 @@
-fn main() {
-    println!("Hello, world!");
+mod api;
+
+#[tokio::main]
+async fn main() {
+    api::serve().await;
 }
