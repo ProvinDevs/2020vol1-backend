@@ -8,7 +8,7 @@ pub struct ClassID(pub Uuid);
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct FileID(pub Uuid);
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct PassPhrase(pub String);
 
 #[derive(Serialize, Deserialize, Clone)]
