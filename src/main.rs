@@ -1,5 +1,7 @@
+mod api;
 mod model;
 
-fn main() {
-    println!("Hello, world!");
+#[tokio::main]
+async fn main() {
+    api::serve().await;
 }
