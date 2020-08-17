@@ -1,4 +1,5 @@
 use super::{with_db, Synced};
+use crate::api::handler::classes;
 use crate::db::Database;
 use std::sync::Arc;
 use warp::Filter;
@@ -18,7 +19,10 @@ fn classes_list<D>(
 where
     D: Database, // here?
 {
-    warp::path!("classes").and(warp::get()).and(with_db(db))
+    warp::path!("classes")
+        .and(warp::get())
+        .and(with_db(db))
+        .and_then(classes::classes_list)
 }
 
 fn create_class<D>(

@@ -1,9 +1,9 @@
 use std::sync::{Arc, Mutex};
 use warp::Filter;
 
-use crate::db::Database;
+use crate::db::{Database, DatabaseError};
 
-mod classes;
+pub mod classes;
 
 type Synced<T> = Arc<Mutex<T>>;
 
