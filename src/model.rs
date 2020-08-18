@@ -4,8 +4,6 @@ use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-const SEED_STR: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ClassID(pub Uuid);
 
@@ -55,6 +53,8 @@ impl Class {
 
     #[inline]
     fn generate_pass_phrase(size: usize) -> String {
+        const SEED_STR: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
         let mut rng = &mut rand::thread_rng();
         String::from_utf8(
             SEED_STR
