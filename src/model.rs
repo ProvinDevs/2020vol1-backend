@@ -1,4 +1,3 @@
-extern crate rand;
 use crate::db::{Database, DatabaseError};
 use chrono::{DateTime, Utc};
 use rand::seq::SliceRandom;
