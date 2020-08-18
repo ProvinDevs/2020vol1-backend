@@ -19,3 +19,4 @@ uuid = { version = "0.8.1", features = ["v4", "serde"] }
 chrono = { version = "0.4.15", features = ["serde"] }
 async-trait = "0.1.37"
 thiserror = "1.0.20"
+rand = "0.7.3"

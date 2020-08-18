@@ -1,4 +1,6 @@
+use crate::db::{Database, DatabaseError};
 use chrono::{DateTime, Utc};
+use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -8,7 +10,7 @@ pub struct ClassID(pub Uuid);
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct FileID(pub Uuid);
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct PassPhrase(pub String);
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -25,6 +27,46 @@ pub struct Class {
     pub files: Vec<File>,
 }
 
+impl Class {
+    pub async fn new(db: &impl Database, name: String) -> Result<Self, DatabaseError> {
+        let id = loop {
+            let generated_id = ClassID(Uuid::new_v4());
+            if !db.class_id_exists(&generated_id).await? {
+                break generated_id;
+            }
+        };
+
+        let pass_phrase = loop {
+            let generated_phrase = PassPhrase(Self::generate_pass_phrase(6));
+            if !db.pass_phrase_exists(&generated_phrase).await? {
+                break generated_phrase;
+            }
+        };
+
+        Ok(Class {
+            id,
+            pass_phrase,
+            name,
+            files: vec![],
+        })
+    }
+
+    #[inline]
+    fn generate_pass_phrase(size: usize) -> String {
+        const SEED_STR: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        let mut rng = &mut rand::thread_rng();
+        String::from_utf8(
+            SEED_STR
+                .as_bytes()
+                .choose_multiple(&mut rng, size)
+                .cloned()
+                .collect(),
+        )
+        .unwrap()
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone)]
 pub struct File {
     pub id: FileID,
@@ -34,6 +76,31 @@ pub struct File {
 
     #[serde(rename = "resourceInfo")]
     pub resource_info: ResourceInfo,
+}
+
+impl File {
+    pub async fn new(
+        db: &impl Database,
+        marker_id: ArMarkerID,
+        filename: String,
+        created_at: DateTime<Utc>,
+    ) -> Result<File, DatabaseError> {
+        let id = loop {
+            let generated_id = FileID(Uuid::new_v4());
+            if !db.file_id_exists(&generated_id).await? {
+                break generated_id;
+            }
+        };
+
+        Ok(File {
+            id,
+            marker_id,
+            resource_info: ResourceInfo {
+                filename,
+                created_at,
+            },
+        })
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone)]

@@ -97,4 +97,32 @@ impl Database for MemoryDB {
 
         Err(DatabaseError::FileNotFound)
     }
+
+    async fn get_class_by_pass_phrase(
+        &self,
+        pass_phrase: &PassPhrase,
+    ) -> Result<Class, DatabaseError> {
+        self.inner
+            .iter()
+            .find(|c| c.pass_phrase == *pass_phrase)
+            .map_or_else(|| Err(DatabaseError::ClassNotFound), |c| Ok(c.clone()))
+    }
+
+    async fn class_id_exists(&self, id: &ClassID) -> Result<bool, DatabaseError> {
+        Ok(self.inner.iter().any(|c| c.id == *id))
+    }
+
+    async fn pass_phrase_exists(&self, pass_phrase: &PassPhrase) -> Result<bool, DatabaseError> {
+        Ok(self.inner.iter().any(|c| c.pass_phrase == *pass_phrase))
+    }
+
+    async fn file_id_exists(&self, file_id: &FileID) -> Result<bool, DatabaseError> {
+        for class in &self.inner {
+            if class.files.iter().any(|f| f.id == *file_id) {
+                return Ok(true);
+            }
+        }
+
+        Ok(false)
+    }
 }
