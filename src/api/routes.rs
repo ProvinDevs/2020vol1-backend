@@ -7,16 +7,16 @@ use serde::de::DeserializeOwned;
 use std::sync::Arc;
 use warp::Filter;
 
+#[derive(Debug)]
+struct ApiDBError(DatabaseError);
+impl warp::reject::Reject for ApiDBError {}
+
 // returns filter that combined all filters in child modules.
 pub(super) fn routes(
     db: Synced<impl Database>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     classes::classes(&db)
 }
-
-#[derive(Debug)]
-struct ApiDBError(DatabaseError);
-impl warp::reject::Reject for ApiDBError {}
 
 fn with_json_body<T>() -> impl Filter<Extract = (T,), Error = warp::Rejection> + Clone
 where
