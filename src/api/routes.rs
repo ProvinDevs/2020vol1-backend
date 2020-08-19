@@ -1,3 +1,4 @@
+mod class;
 mod classes;
 
 use super::CONTENT_LENGTH_LIMIT;
@@ -7,15 +8,26 @@ use serde::de::DeserializeOwned;
 use std::sync::Arc;
 use warp::Filter;
 
-#[derive(Debug)]
-pub(super) struct ApiDBError(pub(super) DatabaseError);
-impl warp::reject::Reject for ApiDBError {}
+macro_rules! warp_err {
+    ( $(struct $struct_name:ident($from:ty);)* ) => {
+        $(
+            #[derive(Debug)]
+            pub(super) struct $struct_name(pub(super) $from);
+            impl warp::reject::Reject for $struct_name {}
+        )*
+    };
+}
+
+warp_err! {
+    struct ApiDBError(DatabaseError);
+    struct IDParsingError(uuid::Error);
+}
 
 // returns filter that combined all filters in child modules.
 pub(super) fn routes(
     db: Synced<impl Database>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    classes::classes(&db)
+    classes::classes(&db).or(class::class(&db))
 }
 
 fn with_json_body<T>() -> impl Filter<Extract = (T,), Error = warp::Rejection> + Clone
