@@ -8,7 +8,7 @@ use std::sync::Arc;
 use warp::Filter;
 
 #[derive(Debug)]
-struct ApiDBError(DatabaseError);
+pub(super) struct ApiDBError(pub(super) DatabaseError);
 impl warp::reject::Reject for ApiDBError {}
 
 // returns filter that combined all filters in child modules.
