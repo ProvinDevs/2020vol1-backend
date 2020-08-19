@@ -1,12 +1,13 @@
+use crate::db::Database;
+use crate::Synced;
 use warp::Filter;
 
-mod handler;
-mod router;
+mod routes;
 
-const PORT: u16 = 3030;
+const CONTENT_LENGTH_LIMIT: u64 = 1024 * 16;
 
-pub async fn serve() {
-    let routes = warp::any().map(|| "UNCHI");
+pub async fn serve(port: u16, db: Synced<impl Database>) {
+    let route = routes::routes(db).with(warp::log("api"));
 
-    warp::serve(routes).run(([127, 0, 0, 1], PORT)).await;
+    warp::serve(route).run(([127, 0, 0, 1], port)).await;
 }
