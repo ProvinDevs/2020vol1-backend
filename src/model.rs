@@ -2,13 +2,28 @@ use crate::db::{Database, DatabaseError};
 use chrono::{DateTime, Utc};
 use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
+use std::str::FromStr;
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ClassID(pub Uuid);
 
+impl ClassID {
+    pub fn new(raw_id: &str) -> Result<Self, uuid::Error> {
+        let id = Uuid::from_str(raw_id)?;
+        return Ok(ClassID(id));
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct FileID(pub Uuid);
+
+impl FileID {
+    pub fn new(raw_id: &str) -> Result<Self, uuid::Error> {
+        let id = Uuid::from_str(raw_id)?;
+        return Ok(FileID(id));
+    }
+}
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct PassPhrase(pub String);
