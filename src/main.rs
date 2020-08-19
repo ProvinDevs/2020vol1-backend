@@ -3,6 +3,7 @@ mod db;
 mod model;
 
 use crate::db::mem::MemoryDB;
+use crate::db::mongo::MongoDB;
 use std::env;
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -11,12 +12,14 @@ type Synced<D> = Arc<Mutex<D>>;
 
 #[tokio::main]
 async fn main() {
-    setup_logger();
+    // setup_logger();
 
-    let port = get_port();
-    let db = Arc::new(Mutex::new(MemoryDB::new()));
+    // let port = get_port();
+    // let db = Arc::new(Mutex::new(MemoryDB::new()));
 
-    api::serve(port, db).await;
+    // api::serve(port, db).await;
+
+    MongoDB::
 }
 
 fn setup_logger() {
