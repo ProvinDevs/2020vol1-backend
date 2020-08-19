@@ -34,7 +34,14 @@ async fn recover_error(err: warp::Rejection) -> Result<impl warp::Reply, warp::R
                 ))
             }
 
-            _ => {}
+            _ => {
+                log::error!("Database error occur: {:?}", db_err);
+
+                return Ok(warp::reply::with_status(
+                    "Internal Server Error (Cannot retrieve data from database)",
+                    warp::http::StatusCode::INTERNAL_SERVER_ERROR,
+                ));
+            }
         };
     }
 
