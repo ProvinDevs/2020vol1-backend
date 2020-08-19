@@ -45,7 +45,7 @@ async fn recover_error(err: warp::Rejection) -> Result<impl warp::Reply, warp::R
         };
     }
 
-    if let Some(_) = err.find::<IDParsingError>() {
+    if err.find::<IDParsingError>().is_some() {
         return Ok(warp::reply::with_status(
             "Invalid id format",
             warp::http::StatusCode::BAD_REQUEST,

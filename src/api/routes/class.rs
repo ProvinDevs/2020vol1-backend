@@ -16,7 +16,7 @@ fn get(
     db: Synced<impl Database>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::path!("classes" / String)
-        .and(warp::post())
+        .and(warp::get())
         .and(with_db(db))
         .and_then(on_get)
 }
