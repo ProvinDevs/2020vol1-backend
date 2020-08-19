@@ -1,3 +1,4 @@
+mod class;
 mod classes;
 
 use super::CONTENT_LENGTH_LIMIT;
