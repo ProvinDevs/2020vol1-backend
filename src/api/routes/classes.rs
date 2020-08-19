@@ -57,5 +57,12 @@ async fn on_post(
         .map_err(ApiDBError)
         .map_err(warp::reject::custom)?;
 
+    db.lock()
+        .await
+        .save_new_class(&class)
+        .await
+        .map_err(ApiDBError)
+        .map_err(warp::reject::custom)?;
+
     Ok(warp::reply::json(&class))
 }
