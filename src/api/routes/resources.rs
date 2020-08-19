@@ -1,6 +1,5 @@
-use super::{with_db, with_json_body, ApiDBError, IDParsingError};
+use super::{with_db, ApiDBError, IDParsingError};
 use crate::db::Database;
-use crate::model::Class;
 use crate::model::ClassID;
 use crate::Synced;
 use std::str::FromStr;
