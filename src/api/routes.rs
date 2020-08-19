@@ -1,5 +1,6 @@
 mod class;
 mod classes;
+mod resources;
 
 use super::CONTENT_LENGTH_LIMIT;
 use crate::db::{Database, DatabaseError};
@@ -27,7 +28,9 @@ warp_err! {
 pub(super) fn routes(
     db: Synced<impl Database>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    classes::classes(&db).or(class::class(&db))
+    classes::classes(&db)
+        .or(class::class(&db))
+        .or(resources::resources(&db))
 }
 
 fn with_json_body<T>() -> impl Filter<Extract = (T,), Error = warp::Rejection> + Clone
