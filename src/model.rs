@@ -8,8 +8,9 @@ use uuid::Uuid;
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ClassID(pub Uuid);
 
-impl ClassID {
-    pub fn new(raw_id: &str) -> Result<Self, uuid::Error> {
+impl FromStr for ClassID {
+    type Err = uuid::Error;
+    fn from_str(raw_id: &str) -> Result<Self, Self::Err> {
         let id = Uuid::from_str(raw_id)?;
         return Ok(ClassID(id));
     }
@@ -18,8 +19,9 @@ impl ClassID {
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct FileID(pub Uuid);
 
-impl FileID {
-    pub fn new(raw_id: &str) -> Result<Self, uuid::Error> {
+impl FromStr for FileID {
+    type Err = uuid::Error;
+    fn from_str(raw_id: &str) -> Result<Self, Self::Err> {
         let id = Uuid::from_str(raw_id)?;
         return Ok(FileID(id));
     }
