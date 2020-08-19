@@ -1,4 +1,5 @@
 use crate::db::{Database, DatabaseError};
+use crate::Synced;
 use chrono::{DateTime, Utc};
 use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
@@ -8,20 +9,22 @@ use uuid::Uuid;
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ClassID(pub Uuid);
 
-impl ClassID {
-    pub fn new(raw_id: &str) -> Result<Self, uuid::Error> {
+impl FromStr for ClassID {
+    type Err = uuid::Error;
+    fn from_str(raw_id: &str) -> Result<Self, Self::Err> {
         let id = Uuid::from_str(raw_id)?;
-        return Ok(ClassID(id));
+        Ok(ClassID(id))
     }
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct FileID(pub Uuid);
 
-impl FileID {
-    pub fn new(raw_id: &str) -> Result<Self, uuid::Error> {
+impl FromStr for FileID {
+    type Err = uuid::Error;
+    fn from_str(raw_id: &str) -> Result<Self, Self::Err> {
         let id = Uuid::from_str(raw_id)?;
-        return Ok(FileID(id));
+        Ok(FileID(id))
     }
 }
 
@@ -43,17 +46,22 @@ pub struct Class {
 }
 
 impl Class {
-    pub async fn new(db: &impl Database, name: String) -> Result<Self, DatabaseError> {
+    pub async fn new(db: &Synced<impl Database>, name: String) -> Result<Self, DatabaseError> {
         let id = loop {
             let generated_id = ClassID(Uuid::new_v4());
-            if !db.class_id_exists(&generated_id).await? {
+            if !db.lock().await.class_id_exists(&generated_id).await? {
                 break generated_id;
             }
         };
 
         let pass_phrase = loop {
             let generated_phrase = PassPhrase(Self::generate_pass_phrase(6));
-            if !db.pass_phrase_exists(&generated_phrase).await? {
+            if !db
+                .lock()
+                .await
+                .pass_phrase_exists(&generated_phrase)
+                .await?
+            {
                 break generated_phrase;
             }
         };
@@ -95,14 +103,14 @@ pub struct File {
 
 impl File {
     pub async fn new(
-        db: &impl Database,
+        db: &Synced<impl Database>,
         marker_id: ArMarkerID,
         filename: String,
         created_at: DateTime<Utc>,
     ) -> Result<File, DatabaseError> {
         let id = loop {
             let generated_id = FileID(Uuid::new_v4());
-            if !db.file_id_exists(&generated_id).await? {
+            if !db.lock().await.file_id_exists(&generated_id).await? {
                 break generated_id;
             }
         };
