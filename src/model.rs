@@ -3,13 +3,30 @@ use crate::Synced;
 use chrono::{DateTime, Utc};
 use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
+use std::str::FromStr;
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ClassID(pub Uuid);
 
+impl FromStr for ClassID {
+    type Err = uuid::Error;
+    fn from_str(raw_id: &str) -> Result<Self, Self::Err> {
+        let id = Uuid::from_str(raw_id)?;
+        Ok(ClassID(id))
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct FileID(pub Uuid);
+
+impl FromStr for FileID {
+    type Err = uuid::Error;
+    fn from_str(raw_id: &str) -> Result<Self, Self::Err> {
+        let id = Uuid::from_str(raw_id)?;
+        Ok(FileID(id))
+    }
+}
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct PassPhrase(pub String);
