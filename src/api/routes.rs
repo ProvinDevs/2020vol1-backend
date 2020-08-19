@@ -8,13 +8,20 @@ use serde::de::DeserializeOwned;
 use std::sync::Arc;
 use warp::Filter;
 
-#[derive(Debug)]
-pub(super) struct ApiDBError(pub(super) DatabaseError);
-impl warp::reject::Reject for ApiDBError {}
+macro_rules! warp_err {
+    ( $(struct $struct_name:ident($from:ty);)* ) => {
+        $(
+            #[derive(Debug)]
+            pub(super) struct $struct_name(pub(super) $from);
+            impl warp::reject::Reject for $struct_name {}
+        )*
+    };
+}
 
-#[derive(Debug)]
-struct IDParsingError(uuid::Error);
-impl warp::reject::Reject for IDParsingError {}
+warp_err! {
+    struct ApiDBError(DatabaseError);
+    struct IDParsingError(uuid::Error);
+}
 
 // returns filter that combined all filters in child modules.
 pub(super) fn routes(
