@@ -11,11 +11,15 @@ use warp::Filter;
 struct ApiDBError(DatabaseError);
 impl warp::reject::Reject for ApiDBError {}
 
+#[derive(Debug)]
+struct IDParsingError(uuid::Error);
+impl warp::reject::Reject for IDParsingError {}
+
 // returns filter that combined all filters in child modules.
 pub(super) fn routes(
     db: Synced<impl Database>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    classes::classes(&db)
+    classes::classes(&db).or(class::class(&db))
 }
 
 fn with_json_body<T>() -> impl Filter<Extract = (T,), Error = warp::Rejection> + Clone
