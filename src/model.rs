@@ -12,7 +12,7 @@ impl FromStr for ClassID {
     type Err = uuid::Error;
     fn from_str(raw_id: &str) -> Result<Self, Self::Err> {
         let id = Uuid::from_str(raw_id)?;
-        return Ok(ClassID(id));
+        Ok(ClassID(id))
     }
 }
 
@@ -23,7 +23,7 @@ impl FromStr for FileID {
     type Err = uuid::Error;
     fn from_str(raw_id: &str) -> Result<Self, Self::Err> {
         let id = Uuid::from_str(raw_id)?;
-        return Ok(FileID(id));
+        Ok(FileID(id))
     }
 }
 
