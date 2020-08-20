@@ -119,7 +119,7 @@ impl Database for MongoDB {
         &self,
         pass_phrase: &PassPhrase,
     ) -> Result<Class, DatabaseError> {
-        self.search_by_doc(doc! { "pass_phrase": &pass_phrase.0 })
+        self.search_by_doc(doc! { "passPhrase": &pass_phrase.0 })
             .await?
             .ok_or_else(|| DatabaseError::ClassNotFound)
     }
@@ -132,7 +132,7 @@ impl Database for MongoDB {
         self.inner
             .update_one(
                 doc! { "id": class_id.0.to_string() },
-                doc! { "name": new_name },
+                doc! { "$set": { "name": new_name } },
                 None,
             )
             .await
@@ -168,7 +168,7 @@ impl Database for MongoDB {
     async fn pass_phrase_exists(&self, pass_phrase: &PassPhrase) -> Result<bool, DatabaseError> {
         let result = self
             .inner
-            .find_one(doc! { "pass_phrase": &pass_phrase.0 }, None)
+            .find_one(doc! { "passPhrase": &pass_phrase.0 }, None)
             .await
             .map_err(le(DatabaseError::ConnectionError))?;
 
@@ -226,7 +226,12 @@ impl Database for MongoDB {
     }
 
     async fn get_file_by_id(&self, file_id: &FileID) -> Result<File, DatabaseError> {
-        self.aggregate_one_and_parse(vec![
+        #[derive(Deserialize)]
+        struct DBResponse {
+            files: File,
+        }
+
+        self.aggregate_one_and_parse::<DBResponse>(vec![
             doc! {
                 "$project": {
                     "files": true
@@ -239,11 +244,12 @@ impl Database for MongoDB {
             },
             doc! {
                 "$match": {
-                    "id": file_id.0.to_string()
+                    "files.id": file_id.0.to_string()
                 }
             },
         ])
         .await?
+        .map(|e| e.files)
         .ok_or_else(|| DatabaseError::FileNotFound)
     }
 
@@ -254,7 +260,7 @@ impl Database for MongoDB {
             .inner
             .update_many(
                 doc! {},
-                doc! { "$pull": { "files":{ "$match": {"id": file_id.0.to_string()}}}},
+                doc! { "$pull": { "files": { "id": file_id.0.to_string() } } },
                 None,
             )
             .await
@@ -282,7 +288,7 @@ impl Database for MongoDB {
                     },
                     doc! {
                         "$match": {
-                            "id": file_id.0.to_string()
+                            "files.id": file_id.0.to_string()
                         }
                     },
                 ],
@@ -308,6 +314,7 @@ mod test {
     // requires mongodb on localhost.
     #[test]
     fn mongo_test() {
+        env_logger::init();
         async fn test() {
             let db = MongoDB::new("mongodb://localhost")
                 .await
@@ -454,7 +461,7 @@ mod test {
                 assert_eq!(classes[1], after1);
             }
 
-            let file_test_class = &classes[0];
+            let file_test_class = &mut classes[0];
             let mut files = vec![
                 File::new(
                     &db,
@@ -482,6 +489,8 @@ mod test {
                         .add_new_file(&file_test_class.id, file)
                         .await
                         .expect("failed to add new file");
+
+                    file_test_class.files.push(file.clone());
                 }
 
                 let res = db
@@ -565,6 +574,8 @@ mod test {
                     .expect("failed to get files");
 
                 assert_eq!(res_files, files);
+
+                file_test_class.files = res_files;
             }
 
             // delete_class
