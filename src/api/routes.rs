@@ -1,5 +1,6 @@
 mod class;
 mod classes;
+mod resource;
 mod resources;
 
 use super::CONTENT_LENGTH_LIMIT;
@@ -31,6 +32,7 @@ pub(super) fn routes(
     classes::classes(&db)
         .or(class::class(&db))
         .or(resources::resources(&db))
+        .or(resource::resource(&db))
 }
 
 fn with_json_body<T>() -> impl Filter<Extract = (T,), Error = warp::Rejection> + Clone
