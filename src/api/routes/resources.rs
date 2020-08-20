@@ -15,7 +15,7 @@ pub(super) fn resources(
 fn get(
     db: Synced<impl Database>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    warp::path!("classes" / String / "resources")
+    warp::path!("classes" / String / "files")
         .and(warp::get())
         .and(with_db(db))
         .and_then(on_get)
@@ -37,5 +37,5 @@ async fn on_get(
         .map_err(ApiDBError)
         .map_err(warp::reject::custom)?;
 
-    Ok(warp::reply::json(&resources))
+    Ok(warp::reply::json(&files))
 }
