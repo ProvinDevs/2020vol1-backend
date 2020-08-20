@@ -1,7 +1,7 @@
 use crate::db::{Database, DatabaseError, SimpleClassInfo};
 use crate::model::*;
 use async_trait::async_trait;
-use mongodb::bson::{self, doc, Bson, Document};
+use mongodb::bson::{self, doc, Document};
 use mongodb::error::Error as MongoDBError;
 use mongodb::options::ClientOptions;
 use mongodb::{Client, Collection};

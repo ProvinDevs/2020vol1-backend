@@ -4,9 +4,6 @@ mod model;
 
 use crate::db::mem::MemoryDB;
 use crate::db::mongo::MongoDB;
-use crate::db::Database;
-use crate::model::*;
-use chrono::prelude::*;
 use std::env;
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -15,46 +12,29 @@ type Synced<D> = Arc<Mutex<D>>;
 
 #[tokio::main]
 async fn main() {
-    // setup_logger();
+    setup_logger();
 
-    // let port = get_port();
-    // let db = Arc::new(Mutex::new(MemoryDB::new()));
+    let port = get_port();
 
-    // api::serve(port, db).await;
+    match env::var("DATABASE")
+        .expect("Set DATABASE env var to \"memory\" or \"mongo\"")
+        .as_str()
+    {
+        "memory" => {
+            let db = Arc::new(Mutex::new(MemoryDB::new()));
 
-    let db = Arc::new(Mutex::new(
-        MongoDB::new("mongodb://localhost").await.unwrap(),
-    ));
-
-    let classes = vec![
-        Class::new(&db, "理科".to_string()).await.unwrap(),
-        Class::new(&db, "社会".to_string()).await.unwrap(),
-        Class::new(&db, "体育".to_string()).await.unwrap(),
-    ];
-
-    for class in &classes {
-        db.lock().await.save_new_class(class).await.unwrap();
-    }
-
-    let marker = &["foo", "bar", "baz"]
-        .iter()
-        .map(|r| String::from(*r))
-        .collect::<Vec<_>>();
-    let filename = &["ffoo", "fbar", "fbaz"]
-        .iter()
-        .map(|r| String::from(*r))
-        .collect::<Vec<_>>();
-
-    for class in &classes {
-        for (m, f) in marker.iter().cloned().zip(filename.iter().cloned()) {
-            let file = File::new(&db, ArMarkerID(m), f, Utc::now()).await.unwrap();
-
-            db.lock()
-                .await
-                .add_new_file(&class.id, &file)
-                .await
-                .unwrap();
+            api::serve(port, db).await
         }
+
+        "mongo" => {
+            let url = env::var("MONGO_URL").expect("Set MONGO_URL to MongoDB URL");
+            let db = MongoDB::new(&url).await.expect("Failed to connect MongoDB");
+            let db = Arc::new(Mutex::new(db));
+
+            api::serve(port, db).await;
+        }
+
+        _ => panic!("Set DATABASE env var to \"memory\" or \"mongo\""),
     }
 }
 
