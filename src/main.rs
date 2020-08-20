@@ -3,6 +3,7 @@ mod db;
 mod model;
 
 use crate::db::mem::MemoryDB;
+use crate::db::mongo::MongoDB;
 use std::env;
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -14,9 +15,27 @@ async fn main() {
     setup_logger();
 
     let port = get_port();
-    let db = Arc::new(Mutex::new(MemoryDB::new()));
 
-    api::serve(port, db).await;
+    match env::var("DATABASE")
+        .expect("Set DATABASE env var to \"memory\" or \"mongo\"")
+        .as_str()
+    {
+        "memory" => {
+            let db = Arc::new(Mutex::new(MemoryDB::new()));
+
+            api::serve(port, db).await
+        }
+
+        "mongo" => {
+            let url = env::var("MONGO_URL").expect("Set MONGO_URL to MongoDB URL");
+            let db = MongoDB::new(&url).await.expect("Failed to connect MongoDB");
+            let db = Arc::new(Mutex::new(db));
+
+            api::serve(port, db).await;
+        }
+
+        _ => panic!("Set DATABASE env var to \"memory\" or \"mongo\""),
+    }
 }
 
 fn setup_logger() {
