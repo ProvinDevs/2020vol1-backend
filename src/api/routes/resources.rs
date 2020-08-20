@@ -37,5 +37,5 @@ async fn on_get(
         .map_err(ApiDBError)
         .map_err(warp::reject::custom)?;
 
-    Ok(warp::reply::json(&files))
+    Ok(warp::reply::json(&resources))
 }
