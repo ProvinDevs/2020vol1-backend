@@ -9,7 +9,7 @@ use warp::Filter;
 pub(super) fn resource(
     db: &Synced<impl Database>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    get(Arc::clone(db))
+    get(Arc::clone(db)).or(delete(Arc::clone(db)))
 }
 
 fn get(
@@ -34,6 +34,35 @@ async fn on_get(
         .lock()
         .await
         .get_file_by_id(&resource_id)
+        .await
+        .map_err(ApiDBError)
+        .map_err(warp::reject::custom)?;
+
+    Ok(warp::reply::json(&resource))
+}
+
+fn delete(
+    db: Synced<impl Database>,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    warp::path!("classes" / String / "resources" / String)
+        .and(warp::delete())
+        .and(with_db(db))
+        .and_then(on_delete)
+}
+
+async fn on_delete(
+    _: String,
+    raw_resource_id: String,
+    db: Synced<impl Database>,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    let resource_id = FileID::from_str(raw_resource_id.as_str())
+        .map_err(IDParsingError)
+        .map_err(warp::reject::custom)?;
+
+    let resource = db
+        .lock()
+        .await
+        .delete_file(&resource_id)
         .await
         .map_err(ApiDBError)
         .map_err(warp::reject::custom)?;
