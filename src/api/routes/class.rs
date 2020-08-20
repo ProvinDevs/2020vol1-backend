@@ -22,16 +22,6 @@ fn get(
         .and_then(on_get)
 }
 
-fn put(
-    db: Synced<impl Database>,
-) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    warp::path!("classes" / String)
-        .and(warp::put())
-        .and(with_db(db))
-        .and(with_json_body())
-        .and_then(on_put)
-}
-
 async fn on_get(
     raw_id: String,
     db: Synced<impl Database>,
@@ -39,6 +29,7 @@ async fn on_get(
     let id = ClassID::from_str(raw_id.as_str())
         .map_err(IDParsingError)
         .map_err(warp::reject::custom)?;
+
     let class = db
         .lock()
         .await
@@ -50,6 +41,21 @@ async fn on_get(
     Ok(warp::reply::json(&class))
 }
 
+fn put(
+    db: Synced<impl Database>,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    warp::path!("classes" / String)
+        .and(warp::put())
+        .and(with_db(db))
+        .and(with_json_body())
+        .and_then(on_put)
+}
+
+#[derive(Deserialize)]
+struct PutRequestBody {
+    name: String,
+}
+
 async fn on_put(
     raw_id: String,
     db: Synced<impl Database>,
@@ -58,8 +64,8 @@ async fn on_put(
     let id = ClassID::from_str(raw_id.as_str())
         .map_err(IDParsingError)
         .map_err(warp::reject::custom)?;
-    let _ = db
-        .lock()
+
+    db.lock()
         .await
         .rename_class(&id, body.name.as_str())
         .await
@@ -67,9 +73,4 @@ async fn on_put(
         .map_err(warp::reject::custom)?;
 
     Ok(warp::http::StatusCode::NO_CONTENT)
-}
-
-#[derive(Deserialize)]
-struct PutRequestBody {
-    name: String,
 }
