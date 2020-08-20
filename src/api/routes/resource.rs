@@ -21,15 +21,6 @@ fn get(
         .and_then(on_get)
 }
 
-fn delete(
-    db: Synced<impl Database>,
-) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    warp::path!("classes" / String / "resources" / String)
-        .and(warp::delete())
-        .and(with_db(db))
-        .and_then(on_delete)
-}
-
 async fn on_get(
     _: String,
     raw_resource_id: String,
@@ -48,6 +39,15 @@ async fn on_get(
         .map_err(warp::reject::custom)?;
 
     Ok(warp::reply::json(&resource))
+}
+
+fn delete(
+    db: Synced<impl Database>,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    warp::path!("classes" / String / "resources" / String)
+        .and(warp::delete())
+        .and(with_db(db))
+        .and_then(on_delete)
 }
 
 async fn on_delete(
