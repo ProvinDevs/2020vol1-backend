@@ -76,8 +76,10 @@ async fn on_post(
     let class_id = ClassID::from_str(raw_id.as_str())
         .map_err(IDParsingError)
         .map_err(warp::reject::custom)?;
+
     let marker_id = ArMarkerID(body.marker_id);
     let created_at = Utc.timestamp(body.resource_info.created_at, 0);
+
     let file = File::new(&db, marker_id, body.resource_info.file_name, created_at)
         .await
         .map_err(ApiDBError)
