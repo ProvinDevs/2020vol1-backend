@@ -6,7 +6,7 @@ use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub struct SimpleClassInfo {
     pub name: String,
     pub id: ClassID,
@@ -40,7 +40,7 @@ pub trait Database: Send + Sync + 'static {
     async fn file_id_exists(&self, file_id: &FileID) -> Result<bool, DatabaseError>;
 }
 
-#[derive(Error, Debug)]
+#[derive(Error, Debug, PartialEq, Eq)]
 #[non_exhaustive]
 #[allow(dead_code)]
 pub enum DatabaseError {

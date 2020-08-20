@@ -4,6 +4,9 @@ mod model;
 
 use crate::db::mem::MemoryDB;
 use crate::db::mongo::MongoDB;
+use crate::db::Database;
+use crate::model::*;
+use chrono::prelude::*;
 use std::env;
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -19,7 +22,40 @@ async fn main() {
 
     // api::serve(port, db).await;
 
-    MongoDB::
+    let db = Arc::new(Mutex::new(
+        MongoDB::new("mongodb://localhost").await.unwrap(),
+    ));
+
+    let classes = vec![
+        Class::new(&db, "理科".to_string()).await.unwrap(),
+        Class::new(&db, "社会".to_string()).await.unwrap(),
+        Class::new(&db, "体育".to_string()).await.unwrap(),
+    ];
+
+    for class in &classes {
+        db.lock().await.save_new_class(class).await.unwrap();
+    }
+
+    let marker = &["foo", "bar", "baz"]
+        .iter()
+        .map(|r| String::from(*r))
+        .collect::<Vec<_>>();
+    let filename = &["ffoo", "fbar", "fbaz"]
+        .iter()
+        .map(|r| String::from(*r))
+        .collect::<Vec<_>>();
+
+    for class in &classes {
+        for (m, f) in marker.iter().cloned().zip(filename.iter().cloned()) {
+            let file = File::new(&db, ArMarkerID(m), f, Utc::now()).await.unwrap();
+
+            db.lock()
+                .await
+                .add_new_file(&class.id, &file)
+                .await
+                .unwrap();
+        }
+    }
 }
 
 fn setup_logger() {
