@@ -23,7 +23,7 @@ async fn main() {
         "memory" => {
             let db = Arc::new(Mutex::new(MemoryDB::new()));
 
-            api::serve(port, db).await
+            api::serve(port, db).await;
         }
 
         "mongo" => {

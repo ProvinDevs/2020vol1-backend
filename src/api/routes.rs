@@ -1,3 +1,4 @@
+mod by_pass;
 mod class;
 mod classes;
 mod resource;
@@ -33,6 +34,7 @@ pub(super) fn routes(
         .or(class::class(&db))
         .or(resources::resources(&db))
         .or(resource::resource(&db))
+        .or(by_pass::by_pass(&db))
 }
 
 fn with_json_body<T>() -> impl Filter<Extract = (T,), Error = warp::Rejection> + Clone
