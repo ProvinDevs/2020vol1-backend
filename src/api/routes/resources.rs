@@ -1,6 +1,6 @@
-use super::{with_db, with_json_body, ApiDBError, IDParsingError};
+use super::{with_db, with_json_body, ApiDBError, IDParsingError, };
 use crate::db::Database;
-use crate::model::{ArMarkerID, ClassID, File};
+use crate::model::{ArMarkerID, ClassID, File, EpochTime};
 use crate::Synced;
 use chrono::{TimeZone, Utc};
 use serde::Deserialize;
@@ -78,7 +78,7 @@ async fn on_post(
         .map_err(warp::reject::custom)?;
 
     let marker_id = ArMarkerID(body.marker_id);
-    let created_at = Utc.timestamp(body.resource_info.created_at, 0);
+    let created_at = EpochTime(body.resource_info.created_at);
 
     let file = File::new(&db, marker_id, body.resource_info.file_name, created_at)
         .await
