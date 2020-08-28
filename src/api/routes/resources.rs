@@ -2,7 +2,6 @@ use super::{with_db, with_json_body, ApiDBError, IDParsingError};
 use crate::db::Database;
 use crate::model::{ArMarkerID, ClassID, EpochTime, File};
 use crate::Synced;
-use chrono::{TimeZone, Utc};
 use serde::Deserialize;
 use std::str::FromStr;
 use std::sync::Arc;

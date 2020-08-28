@@ -16,26 +16,35 @@ async fn main() {
 
     let port = get_port();
 
-    match env::var("DATABASE")
-        .expect("Set DATABASE env var to \"memory\" or \"mongo\"")
-        .as_str()
-    {
-        "memory" => {
-            let db = Arc::new(Mutex::new(MemoryDB::new()));
+    match env::var("DATABASE").ok() {
+        Some(db_name) => match db_name.as_str() {
+            "memory" => use_memory_db(port).await,
+            "mongo" => use_mongo_db(port).await,
 
-            api::serve(port, db).await;
+            _ => panic!("Set DATABASE env var to \"memory\" or \"mongo\""),
+        },
+
+        None => {
+            log::warn!(
+                "DATABASE env var not set. fallbacking to memory DB, data lost occurs on restart!"
+            );
+
+            use_memory_db(port).await
         }
-
-        "mongo" => {
-            let url = env::var("MONGO_URL").expect("Set MONGO_URL to MongoDB URL");
-            let db = MongoDB::new(&url).await.expect("Failed to connect MongoDB");
-            let db = Arc::new(Mutex::new(db));
-
-            api::serve(port, db).await;
-        }
-
-        _ => panic!("Set DATABASE env var to \"memory\" or \"mongo\""),
     }
+}
+
+async fn use_memory_db(port: u16) {
+    let db = Arc::new(Mutex::new(MemoryDB::new()));
+    api::serve(port, db).await;
+}
+
+async fn use_mongo_db(port: u16) {
+    let url = env::var("MONGO_URL").expect("Set MONGO_URL to MongoDB URL");
+    let db = MongoDB::new(&url).await.expect("Failed to connect MongoDB");
+    let db = Arc::new(Mutex::new(db));
+
+    api::serve(port, db).await;
 }
 
 fn setup_logger() {

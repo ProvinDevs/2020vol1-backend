@@ -1,6 +1,5 @@
 use crate::db::{Database, DatabaseError};
 use crate::Synced;
-use chrono::{DateTime, Utc};
 use rand::rngs::OsRng;
 use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
