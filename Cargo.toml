@@ -1,5 +1,5 @@
 [package]
-name = "hacku_2020_frontend"
+name = "hacku_2020_backend"
 version = "0.1.0"
 authors = ["ProvinDevs"]
 edition = "2018"
@@ -13,11 +13,10 @@ warp = "0.2.4"
 tokio = { version = "0.2.22", features = ["full"] }
 serde = { version = "1.0.115", features = ["derive"] }
 serde_json = "1.0.57"
-google-storage1 = "1.0.14"
 dotenv = "0.15.0"
 uuid = { version = "0.8.1", features = ["v4", "serde"] }
 chrono = { version = "0.4.15", features = ["serde"] }
-async-trait = "0.1.37"
+async-trait = "0.1.38"
 thiserror = "1.0.20"
 rand = "0.7.3"
-mongodb = "1.0.0"
+mongodb = "1.1.0"
