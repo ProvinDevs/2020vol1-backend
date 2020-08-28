@@ -25,7 +25,7 @@ pub async fn serve(port: u16, db: Synced<impl Database>) {
         .with(warp::log("api"))
         .with(cors);
 
-    warp::serve(route).run(([127, 0, 0, 1], port)).await;
+    warp::serve(route).run(([0, 0, 0, 0], port)).await;
 }
 
 // warp::reject::custom()したやつはここで拾わないとwarpがエラー吐く
