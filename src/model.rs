@@ -83,6 +83,9 @@ impl PassPhrase {
 pub struct ArMarkerID(pub String);
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+pub struct EpochTime(pub i64);
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Class {
     pub name: String,
     pub id: ClassID,
@@ -123,7 +126,7 @@ impl File {
         db: &Synced<impl Database>,
         marker_id: ArMarkerID,
         filename: String,
-        created_at: DateTime<Utc>,
+        created_at: EpochTime,
     ) -> Result<File, DatabaseError> {
         let id = FileID::new(db).await?;
 
@@ -144,5 +147,5 @@ pub struct ResourceInfo {
     pub filename: String,
 
     #[serde(rename = "createdAt")]
-    pub created_at: DateTime<Utc>,
+    pub created_at: EpochTime,
 }
