@@ -3,7 +3,6 @@ env: flex
 env_variables:
   DATABASE: "mongo"
   MONGO_URL: "mongodb+srv://hacku2020:genkai_kaihatu_tanosiine@meigen-rust.s6w0h.gcp.mongodb.net/"
-  PORT: "8080"
 
 automatic_scaling:
   min_num_instances: 1
