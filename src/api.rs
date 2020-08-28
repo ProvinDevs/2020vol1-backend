@@ -1,6 +1,7 @@
 use crate::db::{Database, DatabaseError};
 use crate::Synced;
 use routes::{ApiDBError, IDParsingError};
+use warp::http::Method;
 use warp::Filter;
 
 mod routes;
@@ -8,9 +9,21 @@ mod routes;
 const CONTENT_LENGTH_LIMIT: u64 = 1024 * 16;
 
 pub async fn serve(port: u16, db: Synced<impl Database>) {
+    let cors = warp::cors::cors()
+        .allow_any_origin()
+        .allow_headers(vec!["content-type"])
+        .allow_methods(&[
+            Method::GET,
+            Method::PUT,
+            Method::DELETE,
+            Method::POST,
+            Method::OPTIONS,
+        ]);
+
     let route = routes::routes(db)
         .recover(recover_error)
-        .with(warp::log("api"));
+        .with(warp::log("api"))
+        .with(cors);
 
     warp::serve(route).run(([127, 0, 0, 1], port)).await;
 }
