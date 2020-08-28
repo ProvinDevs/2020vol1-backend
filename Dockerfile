@@ -10,3 +10,4 @@ FROM debian
 COPY --from=build /src/target/release/hacku_2020_backend /app/
 WORKDIR /app
 ENTRYPOINT [ "/app/" ]
+
