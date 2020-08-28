@@ -15,7 +15,7 @@ pub(super) fn resource(
 fn get(
     db: Synced<impl Database>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    warp::path!("classes" / String / "resources" / String)
+    warp::path!("classes" / String / "files" / String)
         .and(warp::get())
         .and(with_db(db))
         .and_then(on_get)
@@ -44,7 +44,7 @@ async fn on_get(
 fn delete(
     db: Synced<impl Database>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    warp::path!("classes" / String / "resources" / String)
+    warp::path!("classes" / String / "files" / String)
         .and(warp::delete())
         .and(with_db(db))
         .and_then(on_delete)
